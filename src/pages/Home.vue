@@ -73,9 +73,9 @@
 			:key="todo.id_todo"
 			:name="todo.name"
 			:done="todo.done"
+			:dt_add="todo.dt_add"
 			@save="name => saveTodo(i, name)"
 			@check="checkTodo(i)"
-			@input="(val) => onInput(i, val)"
 			@delete="deleteTodo(i)"
 		/>
 	</div>
@@ -149,11 +149,19 @@ export default {
 			).active = false;
 			activeItem.active = true;
 			if (activeItem.name === 'newest') {
-				console.log('sort by newest');
+				this.todos.sort((a, b) => {
+					const dateA = new Date(a.dt_add);
+					const dateB = new Date(b.dt_add);
+					return dateB - dateA;
+				});
 				return;
 			}
 			if (activeItem.name === 'oldest') {
-				console.log('sort by oldest');
+				this.todos.sort((a, b) => {
+					const dateA = new Date(a.dt_add);
+					const dateB = new Date(b.dt_add);
+					return dateA - dateB;
+				});
 				return;
 			}
 			if (activeItem.name === 'nameDown') {
@@ -166,7 +174,6 @@ export default {
 					}
 					return 0;
 				});
-				return;
 			}
 			if (activeItem.name === 'nameUp') {
 				this.todos.sort((a, b) => {
@@ -178,10 +185,8 @@ export default {
 					}
 					return 0;
 				});
-				return;
 			}
-		},
-		onInput(i, val) {},
+		}
 	},
 	created() {
 		this.$store.dispatch('loadTodos');

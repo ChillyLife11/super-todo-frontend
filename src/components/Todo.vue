@@ -1,4 +1,5 @@
 <template>
+	{{ dt_add }}
 	<div class="relative flex items-center py-4 px-7 shadow rounded-md border" :class="mainBlockClasses">
 		<div
 			class="w-[21px] h-[21px] border rounded-full me-4 cursor-pointer"
@@ -94,11 +95,15 @@ export default {
 			type: String,
 			required: true,
 		},
+		dt_add: {
+			type: String
+		},
 		done: {
 			type: Boolean,
 			required: true
 		}
 	},
+	emits: ['save', 'check', 'delete'],
 	data() {
 		return {
 			baseName: this.name,
@@ -125,7 +130,6 @@ export default {
 			this.$emit('check');
 		},
 		deleteTodo() {
-			console.log('asd');
 			this.$emit('delete');
 		},
 		onFocusOut() {
