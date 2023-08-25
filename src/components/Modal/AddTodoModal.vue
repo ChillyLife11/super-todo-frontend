@@ -2,15 +2,16 @@
 	<Modal
 		title="Add todo"
 		:shown="shown"
+		:isBtnDIsabled="inpValInvalid"
 		@close-modal="$emit('closeModal')"
-		@add-todo="addTodo"
+		@submited="addTodo"
 	>
 		<template #body>
 			<form>
 				<Field
 					label="Todo name"
-					:inpVal="inpVal"
-					@on-input="onInput"
+					:errored="inpValInvalid"
+					v-model="inpVal"
 				></Field>
 			</form>
 		</template>
@@ -36,14 +37,21 @@ export default {
 	data() {
 		return {
 			inpVal: '',
+			inpValPattern: /^.{3,256}$/,
+			inpValInvalid: false
 		}
 	},
 	methods: {
-		onInput(e) {
-			this.inpVal = e.target.value;
-		},
 		addTodo() {
-			this.$store.dispatch('addTodo', this.inpVal);
+			if (this.$store.dispatch('addTodo', this.inpVal)) {
+				this.inpVal = '';
+				this.$emit('close');
+			}
+		}
+	},
+	watch: {
+		inpVal(newVal) {
+			this.inpValInvalid = !this.inpValPattern.test(newVal);
 		}
 	}
 }

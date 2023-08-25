@@ -31,6 +31,8 @@ const store = createStore({
     },
     actions: {
         async loadTodos({ commit }) {
+            console.log(API_URL);
+
             const response = await fetch(API_URL + '/todos?done=false');
             const todos = await response.json();
 
@@ -57,6 +59,7 @@ const store = createStore({
 
             if (response.ok) {
                 commit('addTodo', newTodo);
+                return true;
             }
         },
         async checkTodo({ commit, getters }, i) {

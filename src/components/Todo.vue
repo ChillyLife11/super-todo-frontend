@@ -1,5 +1,4 @@
 <template>
-	{{ dt_add }}
 	<div class="relative flex items-center py-4 px-7 shadow rounded-md border" :class="mainBlockClasses">
 		<div
 			class="w-[21px] h-[21px] border rounded-full me-4 cursor-pointer"
@@ -30,6 +29,7 @@
 			<input
 				type="text"
 				class="block bg-inherit text-inherit w-full outline-none"
+				:class="inputClasses"
 				v-model="baseName"
 				@focus="inpFocused = true"
 				@focusout="onFocusOut"
@@ -95,9 +95,6 @@ export default {
 			type: String,
 			required: true,
 		},
-		dt_add: {
-			type: String
-		},
 		done: {
 			type: Boolean,
 			required: true
@@ -109,21 +106,33 @@ export default {
 			baseName: this.name,
 			editingAllowed: false,
 			inpFocused: false,
+			inpErrored: false,
+			namePattern: /^.{3,256}$/
 		}
 	},
 	computed: {
 		mainBlockClasses() {
 			return {
 				'animate__animated animate__fadeOut bg-blue-600 text-white': this.done,
-				'border-blue-600': this.inpFocused
+				'border-blue-600': this.inpFocused,
+				'border-pink-500': this.inpErrored
+			}
+		},
+		inputClasses() {
+			return {
+				'text-pink-500': this.inpErrored
 			}
 		}
 	},
 	methods: {
 		save() {
 			if (this.baseName !== this.name) {
-				this.$emit('save', this.baseName);
-				this.inpFocused = false;
+				if (this.namePattern.test(this.baseName)) {
+					this.$emit('save', this.baseName);
+					this.inpFocused = false;
+				} else {
+					this.inpErrored = true;
+				}
 			}
 		},
 		check() {
@@ -140,6 +149,11 @@ export default {
 		cancelEditing() {
 			this.inpFocused = false;
 			this.baseName = this.name;
+		}
+	},
+	watch: {
+		baseName() {
+			if (this.inpErrored === true) this.inpErrored = false;
 		}
 	}
 };

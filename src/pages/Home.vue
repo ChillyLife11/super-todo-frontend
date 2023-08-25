@@ -73,16 +73,14 @@
 			:key="todo.id_todo"
 			:name="todo.name"
 			:done="todo.done"
-			:dt_add="todo.dt_add"
 			@save="name => saveTodo(i, name)"
 			@check="checkTodo(i)"
 			@delete="deleteTodo(i)"
 		/>
 	</div>
-
 	<AddTodoModal
 		:shown="addTodoModalShown"
-		@close-modal="addTodoModalShown = false"
+		@close="addTodoModalShown = false"
 	/>
 </template>
 
