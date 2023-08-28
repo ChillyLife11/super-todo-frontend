@@ -3,7 +3,7 @@
 		class="fixed inset-0 z-[999] grid h-screen w-screen place-items-center bg-black bg-opacity-60 backdrop-blur-sm transition-opacity duration-300"
 		:class="modalClasses"
 		tabindex="0"
-		@click.self="$emit('closeModal')"
+		@click.self="$emit('close')"
 	>
 		<transition
 			enter-active-class="animate__animated animate__bounceIn"
@@ -23,7 +23,7 @@
 					<slot name="body"></slot>
 				</div>
 				<div class="flex shrink-0 flex-wrap items-center justify-end p-4 text-blue-gray-500">
-					<button @click.self="$emit('closeModal')" data-ripple-dark="true" data-dialog-close="true"
+					<button @click.self="$emit('close')" data-ripple-dark="true" data-dialog-close="true"
 					        class="middle none center mr-1 rounded-lg py-3 px-6 font-sans text-xs font-bold uppercase text-red-500 transition-all hover:bg-red-500/10 active:bg-red-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
 						Cancel
 					</button>

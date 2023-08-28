@@ -3,7 +3,7 @@
 		title="Add todo"
 		:shown="shown"
 		:isBtnDIsabled="inpValInvalid"
-		@close-modal="$emit('closeModal')"
+		@close="$emit('close')"
 		@submited="addTodo"
 	>
 		<template #body>
@@ -38,7 +38,7 @@ export default {
 		return {
 			inpVal: '',
 			inpValPattern: /^.{3,256}$/,
-			inpValInvalid: false
+			inpValInvalid: true
 		}
 	},
 	methods: {

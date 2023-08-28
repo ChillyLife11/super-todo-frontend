@@ -1,5 +1,5 @@
-import { createStore } from 'vuex';
-import { API_URL } from '@/constants.js';
+import {createStore} from 'vuex';
+import {API_URL} from '@/constants.js';
 
 const store = createStore({
     state: {
@@ -18,7 +18,7 @@ const store = createStore({
             });
         },
         changeName(state, payload) {
-            const { i, name } = payload;
+            const {i, name} = payload;
 
             state.todos[i].name = name;
         },
@@ -30,15 +30,17 @@ const store = createStore({
         }
     },
     actions: {
-        async loadTodos({ commit }) {
-            console.log(API_URL);
-
+        async loadTodos({commit}) {
             const response = await fetch(API_URL + '/todos?done=false');
             const todos = await response.json();
-
             commit('setTodos', todos);
         },
-        async deleteTodo({ commit, getters }, i) {
+        async loadDoneTodos({commit}) {
+            const response = await fetch(API_URL + '/todos?done=true');
+            const todos = await response.json();
+            commit('setTodos', todos);
+        },
+        async deleteTodo({commit, getters}, i) {
             const response = await fetch(API_URL + '/todos/' + getters.todos[i].id_todo, {
                 method: 'DELETE'
             });
@@ -50,7 +52,7 @@ const store = createStore({
             }
 
         },
-        async addTodo({ commit }, name) {
+        async addTodo({commit}, name) {
             const response = await fetch(API_URL + '/todos', {
                 method: 'POST',
                 body: JSON.stringify({name})
@@ -62,7 +64,7 @@ const store = createStore({
                 return true;
             }
         },
-        async checkTodo({ commit, getters }, i) {
+        async checkTodo({commit, getters}, i) {
             const crntTodo = getters.todos[i];
 
             const response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
@@ -80,8 +82,8 @@ const store = createStore({
                 return true;
             }
         },
-        async editTodo({ commit, getters }, payload) {
-            const { name, i } = payload;
+        async editTodo({commit, getters}, payload) {
+            const {name, i} = payload;
             const crntTodo = getters.todos[i];
 
             const response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {

@@ -29,6 +29,7 @@
 import Avatar from '@/components/Avatar.vue';
 
 import HomeIcon from '@/assets/home.svg';
+import DoneIcon from '@/assets/done.svg';
 import avatarImg from '@/assets/avatar.png';
 
 export default {
@@ -45,9 +46,9 @@ export default {
 					text: 'Home',
 				},
 				{
-					icon: HomeIcon,
-					name: 'about',
-					text: 'About',
+					icon: DoneIcon,
+					name: 'done',
+					text: 'Done',
 				},
 			],
 		};

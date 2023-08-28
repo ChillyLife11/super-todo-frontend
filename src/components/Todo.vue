@@ -113,7 +113,7 @@ export default {
 	computed: {
 		mainBlockClasses() {
 			return {
-				'animate__animated animate__fadeOut bg-blue-600 text-white': this.done,
+				'bg-blue-600 text-white': this.done,
 				'border-blue-600': this.inpFocused,
 				'border-pink-500': this.inpErrored
 			}
@@ -136,7 +136,9 @@ export default {
 			}
 		},
 		check() {
-			this.$emit('check');
+			if (!this.done) {
+				this.$emit('check');
+			}
 		},
 		deleteTodo() {
 			this.$emit('delete');
