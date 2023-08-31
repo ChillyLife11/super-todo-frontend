@@ -1,7 +1,7 @@
-import {createStore} from 'vuex';
 import {API_URL} from '@/constants.js';
 
-const store = createStore({
+export default {
+    namespaced: true,
     state: {
         todos: []
     },
@@ -23,7 +23,7 @@ const store = createStore({
             state.todos[i].name = name;
         },
         addTodo(state, newTodo) {
-            state.todos.unshift(newTodo);
+            state.todos.push(newTodo);
         },
         deleteTodo(state, i) {
             state.todos.splice(i, 1);
@@ -45,7 +45,7 @@ const store = createStore({
                 method: 'DELETE'
             });
 
-            const removed = response.json();
+            const removed = await response.json();
 
             if (removed) {
                 commit('deleteTodo', i);
@@ -102,6 +102,4 @@ const store = createStore({
             }
         }
     }
-});
-
-export default store;
+}

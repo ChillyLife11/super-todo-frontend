@@ -1,7 +1,7 @@
 <template>
 	<div class="flex text-stone-600">
 		<div class="w-80">
-			<Sidebar/>
+			<Sidebar />
 		</div>
 		<div class="grow p-8 max-h-screen overflow-auto">
 			<router-view></router-view>
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar.vue';
+import Sidebar from '@/components/templates/Sidebar.vue';
 
 export default {
 	components: {

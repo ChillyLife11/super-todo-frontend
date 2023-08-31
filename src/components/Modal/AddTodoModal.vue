@@ -43,7 +43,7 @@ export default {
 	},
 	methods: {
 		addTodo() {
-			if (this.$store.dispatch('addTodo', this.inpVal)) {
+			if (this.$store.dispatch('todo/addTodo', this.inpVal)) {
 				this.inpVal = '';
 				this.$emit('close');
 			}

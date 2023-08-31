@@ -1,57 +1,9 @@
 <template>
-	<div class="flex items-center">
-		<h1 class="flex items-center text-4xl font-bold text-blue-600 me-auto">
-			<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-blue-600 mr-3">
-				<path fill-rule="evenodd" clip-rule="evenodd"
-				      d="M20.29 7.00048L14.73 2.89048C13.1036 1.70317 10.8964 1.70317 9.27 2.89048L3.72 7.00048C2.64544 7.77462 2.0061 9.01612 2 10.3405V17.7705C2.06002 20.1637 4.04665 22.0564 6.44 22.0005H17.56C19.9534 22.0564 21.94 20.1637 22 17.7705V10.3305C21.9914 9.01185 21.3567 7.77576 20.29 7.00048ZM20.5 17.7705C20.4404 19.3354 19.1251 20.5568 17.56 20.5005H6.44C4.87698 20.5512 3.56502 19.333 3.5 17.7705V10.3405C3.50534 9.4904 3.91817 8.69448 4.61 8.20048L10.16 4.10048C11.2561 3.30006 12.7439 3.30006 13.84 4.10048L19.39 8.21048C20.0812 8.6959 20.4948 9.48583 20.5 10.3305V17.7705ZM7.5 15.7505H16.5C16.9142 15.7505 17.25 16.0863 17.25 16.5005C17.25 16.9147 16.9142 17.2505 16.5 17.2505H7.5C7.08579 17.2505 6.75 16.9147 6.75 16.5005C6.75 16.0863 7.08579 15.7505 7.5 15.7505Z"
-				      fill="currentColor"/>
-			</svg>
-			Home
-		</h1>
-		<Select :items="sortTypes" @changed="sortTodos">
-			<template #trigger>
-				<svg
-					width="32"
-					height="32"
-					viewBox="0 0 25 25"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-					class="block me-2"
-				>
-					<path
-						d="M9.37502 13.5417L9.02147 13.1881L9.37502 12.8345L9.72857 13.1881L9.37502 13.5417ZM9.87502 22.9167C9.87502 23.1928 9.65116 23.4167 9.37502 23.4167C9.09888 23.4167 8.87502 23.1928 8.87502 22.9167L9.87502 22.9167ZM3.81313 18.3964L9.02147 13.1881L9.72857 13.8952L4.52024 19.1035L3.81313 18.3964ZM9.72857 13.1881L14.9369 18.3964L14.2298 19.1035L9.02147 13.8952L9.72857 13.1881ZM9.87502 13.5417L9.87502 22.9167L8.87502 22.9167L8.87502 13.5417L9.87502 13.5417Z"
-						fill="#1e88e5"
-					/>
-					<path
-						d="M15.625 11.4583L15.2715 11.8119L15.625 12.1655L15.9786 11.8119L15.625 11.4583ZM16.125 2.08334C16.125 1.8072 15.9012 1.58334 15.625 1.58334C15.3489 1.58334 15.125 1.8072 15.125 2.08334L16.125 2.08334ZM10.0631 6.60356L15.2715 11.8119L15.9786 11.1048L10.7702 5.89646L10.0631 6.60356ZM15.9786 11.8119L21.1869 6.60356L20.4798 5.89646L15.2715 11.1048L15.9786 11.8119ZM16.125 11.4583L16.125 2.08334L15.125 2.08334L15.125 11.4583L16.125 11.4583Z"
-						fill="#1e88e5"
-					/>
-				</svg>
-				Sort by name
-			</template>
-		</Select>
-		<button class="flex items-center text-xl text-blue-600" type="button" @click="addTodoModalShown = true">
-			<svg
-				width="32"
-				height="32"
-				viewBox="0 0 25 25"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					d="M12.5 6.25L12.5 18.75"
-					stroke="#1e88e5"
-					stroke-linecap="round"
-				/>
-				<path
-					d="M18.75 12.5L6.25 12.5"
-					stroke="#1e88e5"
-					stroke-linecap="round"
-				/>
-			</svg>
-			Add a Todo
-		</button>
-	</div>
+	<Header
+		title="Home"
+		:main-icon="mainSvg"
+		@sort-type-changed="sortTodos"
+	/>
 
 	<div class="py-10 grid grid-cols-1 gap-4">
 		<Todo
@@ -59,121 +11,105 @@
 			:key="todo.id_todo"
 			:name="todo.name"
 			:done="todo.done"
-			@save="name => saveTodo(i, name)"
+			@save="(name) => saveTodo(i, name)"
 			@check="checkTodo(i)"
 			@delete="deleteTodo(i)"
 		/>
 	</div>
-	<AddTodoModal
-		:shown="addTodoModalShown"
-		@close="addTodoModalShown = false"
-	/>
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
 import Todo from '@/components/Todo.vue';
-import Select from '@/components/Select.vue';
-import AddTodoModal from "@/components/Modal/AddTodoModal.vue";
+import Header from '@/components/templates/Header.vue';
+import { mapGetters } from 'vuex';
 
 export default {
 	components: {
-		AddTodoModal,
 		Todo,
-		Select
+		Header,
 	},
 	data() {
 		return {
-			addTodoModalShown: false,
-			sortTypes: [
-				{
-					name: 'newest',
-					text: 'Date (newest)',
-					active: true,
-				},
-				{
-					name: 'oldest',
-					text: 'Date (oldest)',
-					active: false,
-				},
-				{
-					name: 'nameDown',
-					text: 'Name (A-Z)',
-					active: false,
-				},
-				{
-					name: 'nameUp',
-					text: 'Name (Z-A)',
-					active: false,
-				},
-			],
+			activeSortType: 'newest',
+			mainSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M20.29 7.00048L14.73 2.89048C13.1036 1.70317 10.8964 1.70317 9.27 2.89048L3.72 7.00048C2.64544 7.77462 2.0061 9.01612 2 10.3405V17.7705C2.06002 20.1637 4.04665 22.0564 6.44 22.0005H17.56C19.9534 22.0564 21.94 20.1637 22 17.7705V10.3305C21.9914 9.01185 21.3567 7.77576 20.29 7.00048ZM20.5 17.7705C20.4404 19.3354 19.1251 20.5568 17.56 20.5005H6.44C4.87698 20.5512 3.56502 19.333 3.5 17.7705V10.3405C3.50534 9.4904 3.91817 8.69448 4.61 8.20048L10.16 4.10048C11.2561 3.30006 12.7439 3.30006 13.84 4.10048L19.39 8.21048C20.0812 8.6959 20.4948 9.48583 20.5 10.3305V17.7705ZM7.5 15.7505H16.5C16.9142 15.7505 17.25 16.0863 17.25 16.5005C17.25 16.9147 16.9142 17.2505 16.5 17.2505H7.5C7.08579 17.2505 6.75 16.9147 6.75 16.5005C6.75 16.0863 7.08579 15.7505 7.5 15.7505Z" fill="currentColor"/>
+</svg>`,
 		};
 	},
 	computed: {
-		...mapGetters(['todos']),
+		...mapGetters({
+			todos: 'todo/todos',
+		}),
 	},
 	methods: {
 		checkTodo(i) {
-			if (this.$store.dispatch('checkTodo', i)) {
+			if (this.$store.dispatch('todo/checkTodo', i)) {
 				setTimeout(() => {
-					this.$store.commit('filterTodosByUndone');
-				}, 800);
+					this.$store.commit('todo/filterTodosByUndone');
+				}, 600);
 			}
 		},
 		saveTodo(i, name) {
-			this.$store.dispatch('editTodo', {i, name});
+			this.$store.dispatch('todo/editTodo', { i, name });
 		},
 		deleteTodo(i) {
-			console.log('asd');
-			this.$store.dispatch('deleteTodo', i);
+			this.$store.dispatch('todo/deleteTodo', i);
 		},
-		sortTodos(activeItem) {
-			this.sortTypes.find(
-				(sortType) => sortType.active === true,
-			).active = false;
-			activeItem.active = true;
-			if (activeItem.name === 'newest') {
-				this.todos.sort((a, b) => {
-					const dateA = new Date(a.dt_add);
-					const dateB = new Date(b.dt_add);
-					return dateB - dateA;
-				});
-				return;
+		sortTodos(name) {
+			this.activeSortType = name;
+
+			switch (this.activeSortType) {
+				case 'newest':
+					this.todos.sort((a, b) => {
+						const dateA = new Date(a.dt_add);
+						const dateB = new Date(b.dt_add);
+						return dateB - dateA;
+					});
+					break;
+				case 'oldest':
+					this.todos.sort((a, b) => {
+						const dateA = new Date(a.dt_add);
+						const dateB = new Date(b.dt_add);
+						return dateA - dateB;
+					});
+					break;
+				case 'nameDown':
+					this.todos.sort((a, b) => {
+						if (a.name < b.name) {
+							return -1;
+						}
+						if (a.name > b.name) {
+							return 1;
+						}
+						return 0;
+					});
+					break;
+				case 'nameUp':
+					this.todos.sort((a, b) => {
+						if (a.name < b.name) {
+							return 1;
+						}
+						if (a.name > b.name) {
+							return -1;
+						}
+						return 0;
+					});
+					break;
 			}
-			if (activeItem.name === 'oldest') {
-				this.todos.sort((a, b) => {
-					const dateA = new Date(a.dt_add);
-					const dateB = new Date(b.dt_add);
-					return dateA - dateB;
-				});
-				return;
-			}
-			if (activeItem.name === 'nameDown') {
-				this.todos.sort((a, b) => {
-					if (a.name < b.name) {
-						return -1;
-					}
-					if (a.name > b.name) {
-						return 1;
-					}
-					return 0;
-				});
-			}
-			if (activeItem.name === 'nameUp') {
-				this.todos.sort((a, b) => {
-					if (a.name < b.name) {
-						return 1;
-					}
-					if (a.name > b.name) {
-						return -1;
-					}
-					return 0;
-				});
-			}
+		},
+	},
+	watch: {
+		todos: {
+			handler(newTodos, oldTodos) {
+				if (newTodos.length > oldTodos.length) {
+					this.sortTodos(this.activeSortType);
+				}
+			},
+			deep: true
 		}
 	},
 	created() {
-		this.$store.dispatch('loadTodos');
+		this.$store.dispatch('todo/loadTodos');
 	},
 };
 </script>

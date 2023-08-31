@@ -37,7 +37,9 @@ export default {
 			this.listShown = !this.listShown;
 		},
 		itemCheck(i) {
-			this.$emit('changed', this.items[i]);
+			if (!this.items[i].active) {
+				this.$emit('changed', this.items[i]);
+			}
 
 			this.closeList();
 		},

@@ -13,9 +13,9 @@
 					<router-link
 						:to="{ name: route.name }"
 						class="flex items-center py-3 px-10 border-l-4 hover:bg-blue-50 hover:border-blue-50"
-						exact-active-class="border-blue-600 bg-blue-50 hover:border-blue-600"
+						:class="{ 'border-blue-600 bg-blue-50 hover:border-blue-600': $route.name === route.name }"
 					>
-						<img :src="route.icon" alt="" class="mr-2" />
+						<img :src="route.icon" alt="" class="mr-2"/>
 
 						{{ route.text }}
 					</router-link>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex';
+
 import Avatar from '@/components/Avatar.vue';
 
 import HomeIcon from '@/assets/home.svg';
@@ -53,6 +55,11 @@ export default {
 			],
 		};
 	},
+	methods: {
+	},
+	created() {
+
+	}
 };
 </script>
 
