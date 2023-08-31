@@ -24,7 +24,7 @@
 						fill="#1e88e5"
 					/>
 				</svg>
-				Sort by name
+				Sort by
 			</template>
 		</Select>
 		<button

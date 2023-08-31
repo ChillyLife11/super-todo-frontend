@@ -95,12 +95,15 @@ export default {
 						return 0;
 					});
 					break;
+				default:
+					break;
 			}
 		},
 	},
 	watch: {
 		todos: {
 			handler(newTodos, oldTodos) {
+				console.log(newTodos);
 				if (newTodos.length > oldTodos.length) {
 					this.sortTodos(this.activeSortType);
 				}
