@@ -2,6 +2,7 @@
 	<Header
 		title="Home"
 		:main-icon="mainSvg"
+		:show-add-btn="true"
 		@sort-type-changed="sortTodos"
 	/>
 

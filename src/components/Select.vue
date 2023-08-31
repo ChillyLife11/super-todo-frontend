@@ -4,7 +4,7 @@
 			<slot name="trigger"></slot>
 		</button>
 		<div
-			class="absolute l-0 top-[130%] w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+			class="absolute translate-x-1/2 right-1/2 top-[130%] w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
 			:class="listShown ? 'block' : 'hidden'"
 		>
 			<button

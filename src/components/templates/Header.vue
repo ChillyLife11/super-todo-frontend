@@ -27,7 +27,9 @@
 				Sort by
 			</template>
 		</Select>
+		
 		<button
+			v-if="showAddBtn"
 			class="flex items-center text-xl text-blue-600"
 			type="button"
 			@click="addTodoModalShown = true"
@@ -73,6 +75,10 @@ export default {
 	},
 	emits: ['sortTypeChanged'],
 	props: {
+		showAddBtn: {
+			type: Boolean,
+			default: false
+		},
 		mainIcon: {
 			type: String,
 			required: true,
