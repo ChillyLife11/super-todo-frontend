@@ -52,7 +52,7 @@
 					</template>
 				</Button>
 				<Button
-					type="secondary"
+					variant="secondary"
 					text="Cancel"
 					@click="cancelEditing"
 				>
@@ -67,7 +67,7 @@
 					</template>
 				</Button>
 				<Button
-					type="error"
+					variant="error"
 					text="Delete"
 					@click="deleteTodo"
 				>

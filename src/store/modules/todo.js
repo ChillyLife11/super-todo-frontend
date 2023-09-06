@@ -31,18 +31,29 @@ export default {
     },
     actions: {
         async loadTodos({commit}) {
-            const response = await fetch(API_URL + '/todos?done=false');
+            const response = await fetch(API_URL + '/todos?done=false', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            });
             const todos = await response.json();
             commit('setTodos', todos);
         },
         async loadDoneTodos({commit}) {
-            const response = await fetch(API_URL + '/todos?done=true');
+            const response = await fetch(API_URL + '/todos?done=true', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
+            });
             const todos = await response.json();
             commit('setTodos', todos);
         },
         async deleteTodo({commit, getters}, i) {
             const response = await fetch(API_URL + '/todos/' + getters.todos[i].id_todo, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                }
             });
 
             const removed = await response.json();
@@ -55,6 +66,9 @@ export default {
         async addTodo({commit}, name) {
             const response = await fetch(API_URL + '/todos', {
                 method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                },
                 body: JSON.stringify({name})
             });
             const newTodo = await response.json();
@@ -69,12 +83,12 @@ export default {
 
             const response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
                 method: 'PATCH',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                },
                 body: JSON.stringify({
                     done: true
                 }),
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                }
             });
 
             if (response.ok) {
@@ -88,12 +102,12 @@ export default {
 
             const response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
                 method: 'PATCH',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                },
                 body: JSON.stringify({
                     name
                 }),
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                }
             });
 
             if (response.ok) {

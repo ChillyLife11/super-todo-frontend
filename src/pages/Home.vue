@@ -104,7 +104,6 @@ export default {
 	watch: {
 		todos: {
 			handler(newTodos, oldTodos) {
-				console.log(newTodos);
 				if (newTodos.length > oldTodos.length) {
 					this.sortTodos(this.activeSortType);
 				}
