@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import store from '@/store/index.js';
 
 import Home from '@/pages/Home.vue';
 import Done from '@/pages/Done.vue';
@@ -36,8 +37,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	const isAuthenticated = localStorage.getItem('access_token') !== null;
 
-
-	if (to.matched.some(record => record.meta.requiresAuth)) {
+	if (to.meta.requiresAuth) {
 		if (!isAuthenticated) {
 			next('/login'); // Redirect to the login page
 		} else {

@@ -30,14 +30,48 @@ export default {
         }
     },
     actions: {
-        async loadTodos({commit}) {
-            const response = await fetch(API_URL + '/todos?done=false', {
+        async loadTodos({commit, rootState}) {
+            const todoResponse = await fetch(API_URL + '/todos?done=false', {
+                method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
                 }
             });
-            const todos = await response.json();
+
+            let todos = [];
+
+            if (todoResponse.ok) {
+                console.log('ok');
+                todos = await todoResponse.json();
+            } else  {
+                const refreshResponse = await fetch(API_URL + '/users/refresh', {
+                    method: 'POST',
+                    body: JSON.stringify({token: localStorage.getItem('refresh_token')})
+                });
+
+                if (!refreshResponse.ok) {
+                    console.log('refresh error');
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+
+                    return false;
+                }
+                const { access_token, refresh_token } = await refreshResponse.json();
+
+				localStorage.setItem('access_token', access_token);
+				localStorage.setItem('refresh_token', refresh_token);
+
+                const todoResponse = await fetch(API_URL + '/todos?done=false', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    }
+                });
+
+                todos = await todoResponse.json();
+            }
             commit('setTodos', todos);
+            return true;
         },
         async loadDoneTodos({commit}) {
             const response = await fetch(API_URL + '/todos?done=true', {

@@ -73,7 +73,9 @@ export default {
 	},
 	methods: {
 		onSubmit() {
-			this.$store.dispatch('user/login', this.collectFields);
+			if (this.$store.dispatch('user/login', this.collectFields)) {
+				this.$router.push('/');
+			}
 		}
 	},
 	watch: {

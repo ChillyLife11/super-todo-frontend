@@ -24,10 +24,14 @@ export default {
 			});
 
 			if (response.ok) {
-				const { access_token } = await response.json();
-				localStorage.setItem('access_token', access_token)
+				const { access_token, refresh_token } = await response.json();
+				localStorage.setItem('access_token', access_token);
+				localStorage.setItem('refresh_token', refresh_token);
 				commit('setLoggedInStatus', true);
+				return true;
 			}
-		}
+		},
+
+		async
 	}
 }
