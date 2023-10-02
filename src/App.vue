@@ -19,6 +19,7 @@ export default {
 	created() {
 		if (localStorage.getItem('refresh_token')) {
 			this.$store.commit('user/setLoggedInStatus', true);
+			this.$store.commit('todo/setWsConn');
 		}
 	}
 };

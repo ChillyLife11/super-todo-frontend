@@ -3,10 +3,12 @@ import {API_URL} from '@/constants.js';
 export default {
     namespaced: true,
     state: {
+        wsConn: null,
         todos: []
     },
     getters: {
-        todos: state => state.todos
+        todos: state => state.todos,
+        wsConn: state => state.wsConn,
     },
     mutations: {
         setTodos(state, todos) {
@@ -27,6 +29,18 @@ export default {
         },
         deleteTodo(state, i) {
             state.todos.splice(i, 1);
+        },
+        setWsConn(state) {
+            state.wsConn = new WebSocket('ws://localhost:8080');
+            state.wsConn.onopen = function(e) {
+                console.log('Connections established');
+            };
+            state.wsConn.onmessage = function(e) {
+                const { type, todo } = JSON.parse(e.data);
+                if (type === 'add_one') {
+                    state.todos.push(todo);
+                }
+            };
         }
     },
     actions: {
@@ -108,7 +122,7 @@ export default {
             }
 
         },
-        async addTodo({commit, dispatch}, name) {
+        async addTodo({commit, dispatch, getters}, name) {
             let response = await fetch(API_URL + '/todos', {
                 method: 'POST',
                 headers: {
@@ -132,6 +146,9 @@ export default {
             const newTodo = await response.json();
 
             commit('addTodo', newTodo);
+
+            getters.wsConn.send(JSON.stringify(newTodo));
+
             return true;
         },
         async checkTodo({commit, getters, dispatch}, i) {
@@ -160,6 +177,7 @@ export default {
                     }),
                 });
             }
+
 
             crntTodo.done = true;
             return true;
