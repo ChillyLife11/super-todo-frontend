@@ -72,8 +72,8 @@ export default {
 		}
 	},
 	methods: {
-		onSubmit() {
-			if (this.$store.dispatch('user/login', this.collectFields)) {
+		async onSubmit() {
+			if (await this.$store.dispatch('user/login', this.collectFields)) {
 				this.$router.push('/');
 			}
 		}

@@ -114,7 +114,6 @@ export default {
 	async created() {
 		const todos = await this.$store.dispatch('todo/loadTodos');
 		if (!todos) {
-			console.log('Login Error');
 			this.$router.push('/login');
 		}
 	},

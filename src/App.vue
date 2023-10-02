@@ -16,6 +16,11 @@ export default {
 	components: {
 		Sidebar
 	},
+	created() {
+		if (localStorage.getItem('refresh_token')) {
+			this.$store.commit('user/setLoggedInStatus', true);
+		}
+	}
 };
 </script>
 

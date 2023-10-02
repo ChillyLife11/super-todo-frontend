@@ -30,8 +30,8 @@ export default {
         }
     },
     actions: {
-        async loadTodos({commit, rootState}) {
-            const todoResponse = await fetch(API_URL + '/todos?done=false', {
+        async loadTodos({commit, dispatch}) {
+            let response = await fetch(API_URL + '/todos?done=false', {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
@@ -40,55 +40,66 @@ export default {
 
             let todos = [];
 
-            if (todoResponse.ok) {
-                console.log('ok');
-                todos = await todoResponse.json();
-            } else  {
-                const refreshResponse = await fetch(API_URL + '/users/refresh', {
-                    method: 'POST',
-                    body: JSON.stringify({token: localStorage.getItem('refresh_token')})
-                });
+            if (response.status === 400 || response.status === 401) {
+                await dispatch('user/refresh', null, {root: true});
 
-                if (!refreshResponse.ok) {
-                    console.log('refresh error');
-                    localStorage.removeItem('access_token');
-                    localStorage.removeItem('refresh_token');
-
-                    return false;
-                }
-                const { access_token, refresh_token } = await refreshResponse.json();
-
-				localStorage.setItem('access_token', access_token);
-				localStorage.setItem('refresh_token', refresh_token);
-
-                const todoResponse = await fetch(API_URL + '/todos?done=false', {
+                response = await fetch(API_URL + '/todos?done=false', {
                     method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + localStorage.getItem('access_token')
                     }
                 });
-
-                todos = await todoResponse.json();
             }
+
+            todos = await response.json();
+
             commit('setTodos', todos);
             return true;
         },
-        async loadDoneTodos({commit}) {
-            const response = await fetch(API_URL + '/todos?done=true', {
+        async loadDoneTodos({commit, dispatch}) {
+            let response = await fetch(API_URL + '/todos?done=true', {
+                method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
                 }
             });
-            const todos = await response.json();
+
+            let todos = [];
+
+            if (response.status === 400 || response.status === 401) {
+                await dispatch('user/refresh', null, {root: true});
+
+                response = await fetch(API_URL + '/todos?done=false', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    }
+                });
+            }
+
+            todos = await response.json();
+
             commit('setTodos', todos);
+            return true;
         },
-        async deleteTodo({commit, getters}, i) {
-            const response = await fetch(API_URL + '/todos/' + getters.todos[i].id_todo, {
+        async deleteTodo({commit, getters, dispatch}, i) {
+            let response = await fetch(API_URL + '/todos/' + getters.todos[i].id_todo, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
                 }
             });
+
+            if (response.status === 400 || response.status === 401) {
+                await dispatch('user/refresh', null, {root: true});
+
+                response = await fetch(API_URL + '/todos/' + getters.todos[i].id_todo, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    }
+                });
+            }
 
             const removed = await response.json();
 
@@ -97,25 +108,36 @@ export default {
             }
 
         },
-        async addTodo({commit}, name) {
-            const response = await fetch(API_URL + '/todos', {
+        async addTodo({commit, dispatch}, name) {
+            let response = await fetch(API_URL + '/todos', {
                 method: 'POST',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
                 },
                 body: JSON.stringify({name})
             });
+
+            if (response.status === 400 || response.status === 401) {
+                await dispatch('user/refresh', null, {root: true});
+
+                response = await fetch(API_URL + '/todos', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    },
+                    body: JSON.stringify({name})
+                });
+            }
+
             const newTodo = await response.json();
 
-            if (response.ok) {
-                commit('addTodo', newTodo);
-                return true;
-            }
+            commit('addTodo', newTodo);
+            return true;
         },
-        async checkTodo({commit, getters}, i) {
+        async checkTodo({commit, getters, dispatch}, i) {
             const crntTodo = getters.todos[i];
 
-            const response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
+            let response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
@@ -125,16 +147,28 @@ export default {
                 }),
             });
 
-            if (response.ok) {
-                crntTodo.done = true;
-                return true;
+            if (response.status === 400 || response.status === 401) {
+                await dispatch('user/refresh', null, {root: true});
+
+                response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    },
+                    body: JSON.stringify({
+                        done: true
+                    }),
+                });
             }
+
+            crntTodo.done = true;
+            return true;
         },
-        async editTodo({commit, getters}, payload) {
+        async editTodo({commit, getters, dispatch}, payload) {
             const {name, i} = payload;
             const crntTodo = getters.todos[i];
 
-            const response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
+            let response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access_token')
@@ -144,10 +178,22 @@ export default {
                 }),
             });
 
-            if (response.ok) {
-                commit('changeName', {i, name});
-                return true;
+            if (response.status === 400 || response.status === 401) {
+                await dispatch('user/refresh', null, {root: true});
+
+                response = await fetch(API_URL + /todos/ + crntTodo.id_todo, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access_token')
+                    },
+                    body: JSON.stringify({
+                        name
+                    }),
+                });
             }
+
+            commit('changeName', {i, name});
+            return true;
         }
     }
 }
