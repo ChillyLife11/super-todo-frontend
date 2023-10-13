@@ -87,32 +87,57 @@
 import Button from "@/components/Button.vue";
 import { computed, Ref, ref, watch } from 'vue';
 
-const props = defineProps<{
+interface Props {
 	name: string,
 	done: boolean
-}>();
+}
+
+type TOnlyStringClasses<T> = {
+	[K in keyof T]: K extends string ? T[K] : never
+}
+
+interface IMainBlockClasses {
+	'bg-blue-600 text-white': boolean,
+	'border-blue-600': boolean,
+	'border-pink-500': boolean
+}
+
+interface IInpClasses {
+	'text-pink-500': boolean,
+}
+
+
+const props = defineProps<Props>();
 
 const baseName: Ref<string> = ref(props.name);
-const editingAllowed: Ref<boolean> = ref(false);
 const inpFocused: Ref<boolean> = ref(false);
 const inpErrored: Ref<boolean> = ref(false);
 const namePattern: Ref<RegExp> = ref(/^.{3,256}$/);
 
-const emit = defineEmits(['save', 'check', 'deleteTodo', 'onFocusOut', 'cancelEditing']);
+	
+const emit = defineEmits<{
+	(e: 'save', value: string): void,
+	(e: 'check'): void,
+	(e: 'deleteTodo'): void,
+	(e: 'onFocusOut'): void,
+	(e: 'cancelEditing'): void,
+}>();
 
-const mainBlockClasses = computed((): object => {
+
+const mainBlockClasses = computed((): TOnlyStringClasses<IMainBlockClasses> => {
 	return {
 		'bg-blue-600 text-white': props.done,
 		'border-blue-600': inpFocused.value,
-		'border-pink-500': inpErrored.value
+		'border-pink-500': inpErrored.value,
 	}
 });
 
-const inputClasses = computed(() => {
+const inputClasses = computed((): TOnlyStringClasses<IInpClasses> => {
 	return {
-		'text-pink-500': inpErrored.value
+		'text-pink-500': inpErrored.value,
 	}
 });
+
 
 function save(): void {
 	if (baseName.value !== props.name) {
@@ -120,7 +145,7 @@ function save(): void {
 			emit('save', baseName.value);
 			inpFocused.value = false;
 		} else {
-			this.inpErrored = true;
+			inpErrored.value = true;
 		}
 	}
 }
@@ -149,78 +174,4 @@ function cancelEditing(): void {
 }
 
 watch(baseName, (): boolean | '' => inpErrored.value ? inpErrored.value = false : '');
-
-// export default {
-// 	components: {
-// 		Button
-// 	},
-// 	props: {
-// 		name: {
-// 			type: String,
-// 			required: true,
-// 		},
-// 		done: {
-// 			type: Boolean,
-// 			required: true
-// 		}
-// 	},
-// 	emits: ['save', 'check', 'delete'],
-// 	data() {
-// 		return {
-// 			baseName: this.name,
-// 			editingAllowed: false,
-// 			inpFocused: false,
-// 			inpErrored: false,
-// 			namePattern: /^.{3,256}$/
-// 		}
-// 	},
-// 	computed: {
-// 		mainBlockClasses() {
-// 			return {
-// 				'bg-blue-600 text-white': this.done,
-// 				'border-blue-600': this.inpFocused,
-// 				'border-pink-500': this.inpErrored
-// 			}
-// 		},
-// 		inputClasses() {
-// 			return {
-// 				'text-pink-500': this.inpErrored
-// 			}
-// 		}
-// 	},
-// 	methods: {
-// 		save() {
-// 			if (this.baseName !== this.name) {
-// 				if (this.namePattern.test(this.baseName)) {
-// 					this.$emit('save', this.baseName);
-// 					this.inpFocused = false;
-// 				} else {
-// 					this.inpErrored = true;
-// 				}
-// 			}
-// 		},
-// 		check() {
-// 			if (!this.done) {
-// 				this.$emit('check');
-// 			}
-// 		},
-// 		deleteTodo() {
-// 			this.$emit('delete');
-// 		},
-// 		onFocusOut() {
-// 			if (this.baseName === this.name) {
-// 				this.inpFocused = false;
-// 			}
-// 		},
-// 		cancelEditing() {
-// 			this.inpFocused = false;
-// 			this.baseName = this.name;
-// 		}
-// 	},
-// 	watch: {
-// 		baseName() {
-// 			if (this.inpErrored === true) this.inpErrored = false;
-// 		}
-// 	}
-// };
 </script>
