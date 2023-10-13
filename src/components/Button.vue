@@ -9,39 +9,64 @@
 	</button>
 </template>
 
-<script>
-export default {
-	props: {
-		variant: {
-			type: String,
-			default: 'primary',
-			validator: value => {
-				return value === 'primary' || value === 'error' || value === 'secondary'
-			}
-		},
-		type: {
-			type: String,
-			default: 'button'
-		},
-		text: {
-			type: String,
-			default: 'Button'
-		},
-		moreClasses: {
-			type: String,
-		}
-	},
-	computed: {
-		getVariantClass() {
-			switch (this.variant) {
-				case 'primary':
-					return 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-300';
-				case 'error':
-					return 'bg-red-600 hover:bg-red-700 focus:ring-red-300';
-				case 'secondary':
-					return 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-300';
-			}
-		}
+<script lang="ts" setup>
+
+import { computed } from 'vue';
+
+const props = withDefaults(defineProps<{
+	variant?: 'primary' | 'error' | 'secondary',
+	type?: 'button' | 'submit' | 'reset',
+	text?: string,
+	moreClasses?: string
+}>(), {
+	variant: 'primary',
+	type: 'button',
+	text: 'Button'
+});
+
+const getVariantClass = computed((): string => {
+	switch (props.variant) {
+		case 'primary':
+			return 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-300';
+		case 'error':
+			return 'bg-red-600 hover:bg-red-700 focus:ring-red-300';
+		case 'secondary':
+			return 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-300';
 	}
-}
+});
+
+// export default {
+// 	props: {
+// 		variant: {
+// 			type: String,
+// 			default: 'primary',
+// 			validator: value => {
+// 				return value === 'primary' || value === 'error' || value === 'secondary'
+// 			}
+// 		},
+// 		type: {
+// 			type: String,
+// 			default: 'button'
+// 		},
+// 		text: {
+// 			type: String,
+// 			default: 'Button'
+// 		},
+// 		moreClasses: {
+// 			type: String,
+// 		}
+// 	},
+// 	computed: {
+// 		getVariantClass() {
+// 			switch (this.variant) {
+// 				case 'primary':
+// 					return 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-300';
+// 				case 'error':
+// 					return 'bg-red-600 hover:bg-red-700 focus:ring-red-300';
+// 				case 'secondary':
+// 					return 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-300';
+// 			}
+// 		}
+// 	}
+// }
 </script>

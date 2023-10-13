@@ -1,7 +1,7 @@
 <template>
 	<div class="flex text-stone-600">
 		<div class="w-80">
-			<Sidebar />
+			<Sidebar class='primary--small-rounded'/>
 		</div>
 		<div class="grow p-8 max-h-screen overflow-auto">
 			<router-view></router-view>

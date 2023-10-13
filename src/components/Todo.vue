@@ -39,7 +39,7 @@
 			enter-active-class="animate__animated animate__bounceIn"
 			leave-active-class="animate__animated animate__fadeOut animate__faster"
 		>
-			<div v-if="inpFocused" class="absolute right-7 top-50 flex gap-2 flex">
+			<div v-if="inpFocused" class="absolute right-7 top-50 flex gap-2">
 				<Button
 					text="Save"
 					@click="save"
@@ -83,80 +83,144 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import Button from "@/components/Button.vue";
+import { computed, Ref, ref, watch } from 'vue';
 
-export default {
-	components: {
-		Button
-	},
-	props: {
-		name: {
-			type: String,
-			required: true,
-		},
-		done: {
-			type: Boolean,
-			required: true
-		}
-	},
-	emits: ['save', 'check', 'delete'],
-	data() {
-		return {
-			baseName: this.name,
-			editingAllowed: false,
-			inpFocused: false,
-			inpErrored: false,
-			namePattern: /^.{3,256}$/
-		}
-	},
-	computed: {
-		mainBlockClasses() {
-			return {
-				'bg-blue-600 text-white': this.done,
-				'border-blue-600': this.inpFocused,
-				'border-pink-500': this.inpErrored
-			}
-		},
-		inputClasses() {
-			return {
-				'text-pink-500': this.inpErrored
-			}
-		}
-	},
-	methods: {
-		save() {
-			if (this.baseName !== this.name) {
-				if (this.namePattern.test(this.baseName)) {
-					this.$emit('save', this.baseName);
-					this.inpFocused = false;
-				} else {
-					this.inpErrored = true;
-				}
-			}
-		},
-		check() {
-			if (!this.done) {
-				this.$emit('check');
-			}
-		},
-		deleteTodo() {
-			this.$emit('delete');
-		},
-		onFocusOut() {
-			if (this.baseName === this.name) {
-				this.inpFocused = false;
-			}
-		},
-		cancelEditing() {
-			this.inpFocused = false;
-			this.baseName = this.name;
-		}
-	},
-	watch: {
-		baseName() {
-			if (this.inpErrored === true) this.inpErrored = false;
+const props = defineProps<{
+	name: string,
+	done: boolean
+}>();
+
+const baseName: Ref<string> = ref(props.name);
+const editingAllowed: Ref<boolean> = ref(false);
+const inpFocused: Ref<boolean> = ref(false);
+const inpErrored: Ref<boolean> = ref(false);
+const namePattern: Ref<RegExp> = ref(/^.{3,256}$/);
+
+const emit = defineEmits(['save', 'check', 'deleteTodo', 'onFocusOut', 'cancelEditing']);
+
+const mainBlockClasses = computed((): object => {
+	return {
+		'bg-blue-600 text-white': props.done,
+		'border-blue-600': inpFocused.value,
+		'border-pink-500': inpErrored.value
+	}
+});
+
+const inputClasses = computed(() => {
+	return {
+		'text-pink-500': inpErrored.value
+	}
+});
+
+function save(): void {
+	if (baseName.value !== props.name) {
+		if (namePattern.value.test(baseName.value)) {
+			emit('save', baseName.value);
+			inpFocused.value = false;
+		} else {
+			this.inpErrored = true;
 		}
 	}
-};
+}
+
+function check(): void {
+	if (!props.done) {
+		emit('check');
+	}
+}
+
+function deleteTodo(): void {
+	if (!props.done) {
+		emit('check');
+	}
+}
+
+function onFocusOut(): void {
+	if (baseName.value === props.name) {
+		inpFocused.value = false;
+	}
+}
+
+function cancelEditing(): void {
+	inpFocused.value = false;
+	baseName.value = props.name;
+}
+
+watch(baseName, (): boolean | '' => inpErrored.value ? inpErrored.value = false : '');
+
+// export default {
+// 	components: {
+// 		Button
+// 	},
+// 	props: {
+// 		name: {
+// 			type: String,
+// 			required: true,
+// 		},
+// 		done: {
+// 			type: Boolean,
+// 			required: true
+// 		}
+// 	},
+// 	emits: ['save', 'check', 'delete'],
+// 	data() {
+// 		return {
+// 			baseName: this.name,
+// 			editingAllowed: false,
+// 			inpFocused: false,
+// 			inpErrored: false,
+// 			namePattern: /^.{3,256}$/
+// 		}
+// 	},
+// 	computed: {
+// 		mainBlockClasses() {
+// 			return {
+// 				'bg-blue-600 text-white': this.done,
+// 				'border-blue-600': this.inpFocused,
+// 				'border-pink-500': this.inpErrored
+// 			}
+// 		},
+// 		inputClasses() {
+// 			return {
+// 				'text-pink-500': this.inpErrored
+// 			}
+// 		}
+// 	},
+// 	methods: {
+// 		save() {
+// 			if (this.baseName !== this.name) {
+// 				if (this.namePattern.test(this.baseName)) {
+// 					this.$emit('save', this.baseName);
+// 					this.inpFocused = false;
+// 				} else {
+// 					this.inpErrored = true;
+// 				}
+// 			}
+// 		},
+// 		check() {
+// 			if (!this.done) {
+// 				this.$emit('check');
+// 			}
+// 		},
+// 		deleteTodo() {
+// 			this.$emit('delete');
+// 		},
+// 		onFocusOut() {
+// 			if (this.baseName === this.name) {
+// 				this.inpFocused = false;
+// 			}
+// 		},
+// 		cancelEditing() {
+// 			this.inpFocused = false;
+// 			this.baseName = this.name;
+// 		}
+// 	},
+// 	watch: {
+// 		baseName() {
+// 			if (this.inpErrored === true) this.inpErrored = false;
+// 		}
+// 	}
+// };
 </script>
